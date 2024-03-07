@@ -1,0 +1,1 @@
+to start server do "npm start"
