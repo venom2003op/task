@@ -7,6 +7,7 @@ dotenv.config();
 const app=express();
 const Port=4000;
 app.use(bodyParser.json()); 
+//mongodb
 const MONGODBURL=process.env.MONGODB_URL;
 app.use((req,res,next)=>{
     res.setHeader('Access-Control-Allow-Origin','*');
@@ -14,9 +15,9 @@ app.use((req,res,next)=>{
     res.setHeader('Access-Control-Allow-Methods','GET, POST, PATCH, DELETE');
     next();
 });
-
+//api
 app.use('/api/users',usersRoutes);
-
+//db connection
 mongoose.connect(MONGODBURL,{
     useNewUrlParser:true,
     useUnifiedTopology:true,

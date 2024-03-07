@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { validationResult } from 'express-validator';
 import User from '../models/user.js';
-       
+// signup controller       
 export const signup=async(req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -36,7 +36,7 @@ export const signup=async(req, res, next) => {
     }
     return res.status(201).json({user: createdUser});
 }
-
+//login controller
 export const login=async(req, res, next) => {  
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -59,13 +59,14 @@ export const login=async(req, res, next) => {
     return res.json({ message: 'Logged in!' });
 
 }
-
+// forgetpassword controller
 export const forgetpassword=async(req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
         return res.status(422).json({ errors: errors.array() });
     }
+    
     const { email } = req.body;
     let existingUser;
     try{
