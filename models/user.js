@@ -4,5 +4,13 @@ const userSchema = mongoose.Schema({
     email: { type: String, required: true, unique: true},
     password: { type: String, required: true, minlength: 6 },
     id: { type: String },
+    post: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Post'
+        }
+    ]
+},{
+    timestamps: true,
 });
 export default mongoose.model('User', userSchema);

@@ -60,26 +60,40 @@ export const login=async(req, res, next) => {
 
 }
 // forgetpassword controller
+
+
 export const forgetpassword=async(req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
         return res.status(422).json({ errors: errors.array() });
     }
-    
-    const { email } = req.body;
+    const { email ,oldpassword, newpassword } = req.body;
     let existingUser;
     try{
         existingUser=await User.findOne({email:email});
         
     }catch(err){
-        const error = new Error('Password reset failed, please try again later.');
+        const error = new Error('Resetting password failed, please try again later.');
         return res.status(500).json({message:error.message});
     }
     if(!existingUser){
-        const error = new Error('Invalid credentials, could not reset password.');
+        const error = new Error('No user found for this email.');
+        return res.status(404).json({message:error.message});
+    }
+    if(existingUser.password !== oldpassword){
+        const error = new Error('Invalid old password.');
         return res.status(403).json({message:error.message});
     }
-    
+    existingUser.password=newpassword;
+    try{
+        await existingUser.save();
+    }
+    catch(err){
+        console.error("Resetting password failed,please try again:", err);
+        return res.status(500).send("Error resetting password");
+    }
+
     return res.json({ message: 'Password reset!' });
+
 }

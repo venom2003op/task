@@ -16,8 +16,8 @@ router.post('/login',[check('email').normalizeEmail()
                     .isEmail(), //Test@test.com  ---> test@test.com 
                     check('password').isLength({min:6})],login );
 // forgetpassword route
-router.post('/forgetpassword',[check('email').normalizeEmail().isEmail()
-],forgetpassword );
+router.patch('/forgetpassword',[check('email').normalizeEmail().isEmail()
+,check('newpassword').isLength({min:6}),check('oldpassword').isLength({min:6})],forgetpassword );
                      
 
 export default router;

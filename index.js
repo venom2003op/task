@@ -2,6 +2,9 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import usersRoutes from './routes/userroutes.js';
+import postsRoutes from './routes/postroutes.js';
+import commentsRoutes from './routes/commentroutes.js';
+import likesRoutes from './routes/likesroutes.js';
 import dotenv from 'dotenv';
 dotenv.config();
 const app=express();
@@ -17,6 +20,9 @@ app.use((req,res,next)=>{
 });
 //api
 app.use('/api/users',usersRoutes);
+app.use('/api/posts',postsRoutes);
+app.use('/api/comments',commentsRoutes);
+app.use("/api/likes",likesRoutes);
 //db connection
 mongoose.connect(MONGODBURL,{
     useNewUrlParser:true,
