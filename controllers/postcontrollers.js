@@ -44,17 +44,19 @@ export const createPost = async (req, res) => {
         console.log(errors);
         return res.status(422).json({ errors: errors.array() });
     }
-    const { content, userid } = req.body;
+    const { content } = req.body;
     
     const createdPost = new Post({
         id: uuidv4(),
         content,
-        user: userid
+        user: req.userData.userId
     });
+    console.log(createdPost);
+    console.log(req.userData.userId);
     // createPost=await createPost.populate('user', 'name');
     let user;
     try {
-        user = await User.findById(userid);
+        user = await User.findById(req.userData.userId);
     }
     catch (err) {
         console.error("Error getting user by id:", err);
@@ -95,6 +97,9 @@ export const updatePost = async (req, res) => {
         console.error("Error getting post by id:", err);
         return res.status(500).send("Error getting post by id");
     }
+    if(post.user.toString()!==req.userData.userId){
+        return res.status(401).json({message:'You are not allowed to edit this post.'});
+    }
     post.content = content;
     try {
         await post.save();
@@ -114,7 +119,13 @@ export const deletePost = async (req, res) => {
         .status(404)
         .json({ message: "Could not find post for this id." });
     }
-
+    console.log(postToDelete.toString());
+    console.log(req.userData.userId);
+    if (postToDelete.user._id.toString() !== req.userData.userId) {
+      return res
+        .status(401)
+        .json({ message: "You are not allowed to delete this post." });
+    }
     const user = postToDelete.user;
     if (!user) {
       return res

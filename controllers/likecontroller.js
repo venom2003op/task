@@ -3,12 +3,12 @@ import Post from '../models/post.js';
 import Comment from '../models/comment.js';
 import User from '../models/user.js';
 import mongoose from 'mongoose';
-import e from 'express';
 
 export const toggleLike = async (req, res) => {
-    const { type, likeableid, userid} = req.body;
+    const { type, likeableid} = req.body;
     let likeable;
     let deleted = false;
+
     try {
         if (type === 'Post') {
             likeable = await Post.findById(likeableid).populate('likes');
@@ -29,7 +29,7 @@ export const toggleLike = async (req, res) => {
         existingLike = await Like.findOne({
             likeable: likeableid,
             onModel: type,
-            user: userid
+            user: req.userData.userId
         });
     }
     catch (err) {
@@ -58,7 +58,7 @@ export const toggleLike = async (req, res) => {
         session.startTransaction();
         try {
             const newLike={
-                user: userid,
+                user: req.userData.userId,
                 likeable: likeableid,
                 onModel: type
             };

@@ -29,7 +29,7 @@ export const createComment = async (req, res) => {
         console.log(errors);
         return res.status(422).json({ errors: errors.array() });
     }
-    const { content, postid, userid } = req.body;
+    const { content, postid } = req.body;
     let post;
     try {
         post = await Post.findById(postid);
@@ -44,7 +44,7 @@ export const createComment = async (req, res) => {
     const createdComment = new Comment({
         content,
         post: postid,
-        user: userid
+        user: req.userData.userId
     });
     try {
         const session = await mongoose.startSession();
@@ -77,6 +77,9 @@ export const updateComment = async (req, res) => {
         console.error("Error getting comment by id:", err);
         return res.status(500).send("Error getting comment by id");
     }
+    if(comment.user.toString()!==req.userData.userId){
+        return res.status(401).json({message:'You are not allowed to edit this comment.'});
+    }
     comment.content = content;
     try {
         await comment.save();
@@ -96,6 +99,9 @@ export const deleteComment = async (req, res) => {
             return res
                 .status(404)
                 .json({ message: 'Could not find comment for the provided id.' });
+        }
+        if(commentToDelete.user._id.toString()!==req.userData.userId){
+            return res.status(401).json({message:'You are not allowed to delete this comment.'});
         }
         const session = await mongoose.startSession();
         session.startTransaction();
